@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup as soup
 from time import sleep
 
 
-directory = "C:\\Users\\HP\\Desktop\\ALLPARTS\\VOLANT\\intercar"
+directory = "C:\\Users\\HP\\Desktop\\ALLPARTS\\CATALIZATOARE\\intercar_cod_made_link"
 produs = []
 producator = None
 cod_piesa = None
@@ -35,15 +35,14 @@ for html_file in os.listdir(directory):
         except TypeError:
             pass
         print(cod_piesa, producator, link_piesa)
-        if producator == "SACHS" or producator == "LUK" or producator == "VALEO":
-            produs.append([cod_piesa, producator, link_piesa])
+        produs.append([cod_piesa, producator, link_piesa])
 
-workbook = xlsxwriter.Workbook("C:\\Users\\HP\\Desktop\\ALLPARTS\\VOLANT\\cod_producator_link.xlsx")
+workbook = xlsxwriter.Workbook("C:\\Users\\HP\\Desktop\\ALLPARTS\\CATALIZATOARE\\cod_producator_link.xlsx")
 worksheet = workbook.add_worksheet("Sheet1")
 column_cod_piesa = 0
 column_producator = 1
-column_link_piesa = 12
-row = 1
+column_link_piesa = 2
+row = 0
 for item in produs:
         worksheet.write(row, column_cod_piesa, item[0])
         worksheet.write(row, column_producator, item[1])

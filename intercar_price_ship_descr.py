@@ -1,5 +1,4 @@
 import os.path
-
 import selenium
 from selenium.webdriver.common.by import By
 from selenium import webdriver
@@ -18,15 +17,15 @@ driver.find_element(By.XPATH, "//button[@class='btn btn-default btn col-sm-12']"
 sleep(5)
 driver.get("https://ro.e-cat.intercars.eu/ro/")
 sleep(5)
-workbook = load_workbook("C:\\Users\\Gh0sT\\Desktop\\ALLPARTS\\VOLANT\\cod_producator_link.xlsx")
+workbook = load_workbook("C:\\Users\\HP\\Desktop\\ALLPARTS\\CATALIZATOARE\\cod_producator_link.xlsx")
 worksheet = workbook["Sheet1"]
 column_link = worksheet["C"]
 intercar_link = [column_link[x].value for x in range(len(column_link))]
 column_code = worksheet["A"]
 code_list = [column_code[x].value for x in range(len(column_code))]
-for link in intercar_link[1:]:
+for link in intercar_link:
     code = code_list[intercar_link.index(link)]
-    if os.path.isfile(f"C:\\Users\\Gh0sT\\Desktop\\ALLPARTS\\VOLANT\\intercar_pret_livrare_descr\\{code}.html"):
+    if os.path.isfile(f"C:\\Users\\HP\\Desktop\\ALLPARTS\\CATALIZATOARE\\intercar_pret_livrare_descr\\{code}.html"):
         print(f"Produs extractat: {code}")
     else:
         print(f"Produs in proces: {code}")
@@ -58,10 +57,8 @@ for link in intercar_link[1:]:
                     image = driver.find_element(By.XPATH, "//div[@class='productcarousel__mainitem slick-slide slick-current slick-active']").get_attribute("innerHTML")
                 except:
                     image = "Fara imagine"
-                descriere_tehnica = driver.find_element(By.XPATH, "//div[@class='productinfo__technicaldesc']").get_attribute("innerHTML")
-                tip_produs = driver.find_element(By.XPATH, "//div[@class=' productname productname--productinfo']").get_attribute("innerHTML")
-        html = open(f"C:\\Users\\Gh0sT\\Desktop\\ALLPARTS\\VOLANT\\intercar_pret_livrare_descr\\{code}.html", "w", encoding="utf-8")
-        html.write(tip_produs)
+                descriere_tehnica = driver.find_element(By.XPATH, "//div[@class='productinfo js-onboarding-productdetails-info']").get_attribute("innerHTML")
+        html = open(f"C:\\Users\\HP\\Desktop\\ALLPARTS\\CATALIZATOARE\\intercar_pret_livrare_descr\\{code}.html", "w", encoding="utf-8")
         html.write(descriere_tehnica)
         html.write(image)
         html.write(html_applications)
