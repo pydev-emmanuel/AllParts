@@ -3,6 +3,15 @@ import xlsxwriter
 from openpyxl import load_workbook
 from bs4 import BeautifulSoup as soup
 
+def price_set(price):
+    profit = price/100 * 10
+    if profit < 15:
+        profit = 15
+    tax = profit/100 * 16
+    dividente = profit/100 * 8
+    final_price = round(price + profit + tax + dividente)
+    return final_price
+
 
 def product_data(html_file, code):
     product_details = {}
@@ -15,11 +24,11 @@ def product_data(html_file, code):
         price = price.replace(".", "")
         price = price.replace(",", ".")
         price = int(float(price))
-        price_intercar = price + 30
-        price_intercar = int(price_intercar)
+        price_intercar = price_set(price=price)
         product_details["price"] = price_intercar
     except ValueError:
         price = 1
+        product_details["price"] = price
     try:
         for tag in bs_content.find_all("li", class_="refnumbers__item"):
             if tag.find('span', class_='refnumbers__manufacturer').text == "Echivalente Inter Cars":
@@ -35,23 +44,15 @@ def product_data(html_file, code):
         pass
     product_details["oem_equivalent"] = oem_equivalent
     try:
-        img_src = bs_content.find("img")["src"]
+        img_src = bs_content.find(class_="productcarousel__fullscreen").findNext("img")["src"]
         img_src = img_src.replace("t_t300x300v2/", "")
-    except TypeError:
+    except (TypeError, AttributeError):
         img_src = None
     product_details["img_src"] = img_src
     descriere_tehnica = bs_content.find("div", class_="producttechnicaldesc producttechnicaldesc--productinfo").text
     descriere_tehnica = descriere_tehnica.replace("\n", "")
     descriere_tehnica = descriere_tehnica.strip()
     descriere_tehnica_list = list(descriere_tehnica)
-    try:
-        descriere_tehnica_list.remove("È")
-        for item in descriere_tehnica_list:
-            if item == "™":
-                index = descriere_tehnica_list.index(item)
-                descriere_tehnica_list[index] = "s"
-    except ValueError:
-        pass
     descriere_tehnica = "".join(descriere_tehnica_list)
     product_details["descriere_tehnica"] = descriere_tehnica
     tip_produs = bs_content.find(class_="productname productname--productinfo").text
@@ -59,36 +60,17 @@ def product_data(html_file, code):
     if tip_produs == "Convertor catlitic":
         tip_produs = "Convertor catalitic"
     product_details["tip_produs"] = tip_produs
-    workbook = load_workbook("C:\\Users\\Gh0sT\\Desktop\\ALLPARTS\\CATALIZATOARE\\cod_producator_link.xlsx")
+    workbook = load_workbook("C:\\Users\\HP\\Desktop\\ALLPARTS\\SISTEM DE EVACUARE,ADMISIE\\CONVERTOR CATALITIC\\cod_producator_link.xlsx")
     worksheet = workbook["Sheet1"]
     column_producator = worksheet["B"]
     lista_producator = [column_producator[x].value for x in range(len(column_producator))]
     column_code = worksheet["A"]
     code_list = [column_code[x].value for x in range(len(column_code))]
-    try:
-        for cod_piesa in code_list:
-            if code == cod_piesa:
-                producator = lista_producator[code_list.index(cod_piesa)]
-        product_details["producator"] = producator
-    except UnboundLocalError:
-        product_details["producator"] = "JMJ"
-    for item in bs_content.find_all("td", class_="datatable__item"):
-        if item.text == "Norme emisii gaze esapament":
-            norme = item.findNext("td").text
-            norme = norme.replace("\n", "").strip()
-            product_details["norme"] = norme
-        elif item.text == "Omologare drum":
-            omologare_drum = item.findNext("td").span.a.text
-            omologare_drum = omologare_drum.replace("\n", "").strip()
-            product_details["omologare_drum"] = omologare_drum
-        else:
-            product_details["norme"] = " "
-            product_details["omologare_drum"] = " "
     return product_details
 
 
 def product_aplicatii(html_file):
-    html = open(html_file, "r")
+    html = open(html_file, mode="r", encoding="utf-8")
     contents = html.read()
     bs_content = soup(contents, "lxml")
     aplicatii = {
@@ -168,9 +150,6 @@ def descriere(aplicatii, product_details, cod_produs):
     descriere = f"""<h3>{descriere_tehnica}</h3><br>
         <div><br></div>
         <div><br></div>
-        <div><Omologare drum: {omologare_drum}</div>
-        <div><Norme emisii: {norme}
-        <div><br></div>
         <h3><u>Masini compatibile:</u></h3>
         {tabel_compatibilitate}
         <div><br></div>
@@ -181,7 +160,7 @@ def descriere(aplicatii, product_details, cod_produs):
     return descriere
 
 adauga_excel = []
-directory = "C:\\Users\\Gh0sT\\Desktop\\ALLPARTS\\CATALIZATOARE\\intercar_pret_livrare_descr"
+directory = "C:\\Users\\HP\\Desktop\\ALLPARTS\\SISTEM DE EVACUARE,ADMISIE\\CONVERTOR CATALITIC\\intercar_pret_livrare_descr"
 for html_file in os.listdir(directory):
     cod_produs = html_file.replace(".html", "")
     print(cod_produs)
@@ -205,7 +184,7 @@ for html_file in os.listdir(directory):
             titlu = f"{tip_produs} {key}  {producator} - {cod_produs}"
             adauga_excel.append([titlu, tip_produs, descriere_anunt, "RON", price, "1", img_src])
 
-workbook = xlsxwriter.Workbook("C:\\Users\\Gh0sT\\Desktop\\ALLPARTS\\CATALIZATOARE\\CATALIZATOARE_ANUNTURI.xlsx")
+workbook = xlsxwriter.Workbook("C:\\Users\\HP\\Desktop\\ALLPARTS\\SISTEM DE EVACUARE,ADMISIE\\CONVERTOR CATALITIC\\catalizatoare_test.xlsx")
 worksheet = workbook.add_worksheet("Sheet1")
 row = 0
 for car in adauga_excel:

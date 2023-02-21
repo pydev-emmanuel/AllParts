@@ -5,15 +5,15 @@ from bs4 import BeautifulSoup as soup
 from time import sleep
 
 
-directory = "C:\\Users\\HP\\Desktop\\ALLPARTS\\CATALIZATOARE\\intercar_cod_made_link"
+directory = "C:\\Users\\HP\\Desktop\\ALLPARTS\\FILTRE\\AER"
 produs = []
 producator = None
 cod_piesa = None
 link_piesa = None
-for html_file in os.listdir(directory):
+for html_file in os.listdir(f"{directory}\\intercar_cod_made_link"):
     print(html_file)
-    path = f"{directory}\\{html_file}"
-    html = open(path, "r")
+    path = f"{directory}\\intercar_cod_made_link\\{html_file}"
+    html = open(path, mode="r", encoding="utf-8")
     content = html.read()
     bs_contents = soup(content, "lxml")
     for product in bs_contents.find_all("tr", class_="listingcollapsed__content js-quantity-wrapper"):
@@ -37,7 +37,7 @@ for html_file in os.listdir(directory):
         print(cod_piesa, producator, link_piesa)
         produs.append([cod_piesa, producator, link_piesa])
 
-workbook = xlsxwriter.Workbook("C:\\Users\\HP\\Desktop\\ALLPARTS\\CATALIZATOARE\\cod_producator_link.xlsx")
+workbook = xlsxwriter.Workbook(f"{directory}\\cod_producator_link.xlsx")
 worksheet = workbook.add_worksheet("Sheet1")
 column_cod_piesa = 0
 column_producator = 1

@@ -6,16 +6,21 @@ from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
 from openpyxl import load_workbook
 
+
+PATH = "C:\\Users\\HP\\Desktop\\ALLPARTS\\MOTOR\\INTERCOOLER"
+
+
+
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 driver.get("https://ro.e-cat.intercars.eu")
 sleep(5)
-driver.find_element(By.XPATH, "//input[@class='form-control form-control  bf-required']").send_keys("emanuel_b1998@yahoo.com")
-driver.find_element(By.XPATH, "//input[@class='form-control form-control']").send_keys("Hala@Bilca2021")
+driver.find_element(By.XPATH, "//input[@class='form-control form-control  bf-required']").send_keys("toptechautoparts@yahoo.com")
+driver.find_element(By.XPATH, "//input[@class='form-control form-control']").send_keys("Hala@Bilca1972")
 sleep(1)
 driver.find_element(By.XPATH, "//button[@class='btn btn-default btn col-sm-12']").click()
 sleep(10)
-for page_nr in range(37,41):
-    driver.get(f"https://ro.e-cat.intercars.eu/ro/Oferta-completa/Sistem-de-evacuare-admisie/Sistem-de-evacuare-a-gazelor/Convertor-catlitic/c/tecdoc-7200000-6010045-7213000?q=%3Adefault%3AbranchAvailability%3AALL%3AproductBrandCode%3Aicgoods_2382%3AproductBrandCode%3Aicgoods_1451%3AproductBrandCode%3Aicgoods_1477%3AproductBrandCode%3Aicgoods_1565&page={page_nr}&sort=default")
+for page_nr in range(36):
+    driver.get(f"https://ro.e-cat.intercars.eu/ro/Oferta-completa/Motor/Turbocompresor-Supraalimentare-Elemente/Elemente-sistem-turbosuflanta/Intercooler%2C-compresor/c/tecdoc-6200000-6010132-6216000-genart_468?q=%3Adefault%3AbranchAvailability%3ATWO_DAYS%3Amarket%3APKW&page={page_nr}&sort=default")
     sleep(7)
     y = 300
     for timer in range(0, 8):
@@ -23,7 +28,7 @@ for page_nr in range(37,41):
         y += 300
         sleep(1)
     page = driver.find_element(By.XPATH, "//div[@class='listing js-changeview-listwrapper is-inited']").get_attribute("innerHTML")
-    html = open(f"C:\\Users\\HP\\Desktop\\ALLPARTS\\CATALIZATOARE\\intercar_cod_made_link\\Pagina {page_nr}.html", "w", encoding="utf-8")
+    html = open(f"{PATH}\\intercar_cod_made_link\\Pagina {page_nr}.html", "w", encoding="utf-8")
     html.write(page)
     html.close()
 
